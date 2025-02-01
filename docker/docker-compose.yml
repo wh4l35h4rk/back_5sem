@@ -1,0 +1,43 @@
+version: '3.8'
+services:
+  php:
+    container_name: php_app
+    build:
+      context: ./php
+    volumes:
+      # - ../:/var/www/public 
+      - ../:/var/www/html
+    networks:
+      - app-network
+
+  postgres:
+    image: postgres:15
+    container_name: pgsql_app
+    environment:
+      POSTGRES_DB: back_5sem_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - app-network
+    ports:
+      - "5432:5432"
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx_app
+    volumes:
+      - ../:/var/www/html
+      # - ./src:/var/www/public
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "8090:80"
+    networks:
+      - app-network
+
+volumes:
+  pgdata:
+
+networks:
+  app-network:
