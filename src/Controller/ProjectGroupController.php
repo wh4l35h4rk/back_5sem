@@ -50,17 +50,18 @@ final class ProjectGroupController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_project_group_edit', methods: ['GET', 'POST'])]
+    #[Route('/{id}/edit', name: 'app_project_group_edit', methods: ['GET', 'POST', 'PATCH'])]
     public function edit(Request $request, ProjectGroup $projectGroup, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(ProjectGroupType::class, $projectGroup);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+            if ($request->getMethod() === 'PATCH') {
+                $entityManager->flush();
 
-            return $this->redirectToRoute('app_project_group_index', [], Response::HTTP_SEE_OTHER);
-        }
+                return $this->redirectToRoute('app_project_group_index', [], Response::HTTP_SEE_OTHER);
+        }}
 
         return $this->render('project_group/edit.html.twig', [
             'project_group' => $projectGroup,

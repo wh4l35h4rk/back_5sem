@@ -57,7 +57,6 @@ final class ProjectController extends AbstractController
         $form->handleRequest($request);
     
         if ($form->isSubmitted() && $form->isValid()) {
-            dump($request->getMethod());
             if ($request->getMethod() === 'PATCH') {
                 $entityManager->flush();
                 return $this->redirectToRoute('app_project_index', [], Response::HTTP_SEE_OTHER);
