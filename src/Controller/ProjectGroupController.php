@@ -68,10 +68,10 @@ final class ProjectGroupController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_project_group_delete', methods: ['POST'])]
+    #[Route('/{id}', name: 'app_project_group_delete', methods: ['POST', 'DELETE'])]
     public function delete(Request $request, ProjectGroup $projectGroup, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$projectGroup->getId(), $request->getPayload()->getString('_token'))) {
+        if ($request->getMethod() == 'DELETE' && $this->isCsrfTokenValid('delete'.$projectGroup->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($projectGroup);
             $entityManager->flush();
         }

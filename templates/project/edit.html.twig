@@ -5,7 +5,7 @@
 {% block body %}
     <h1>Edit Project</h1>
 
-    {{ include('project/_form.html.twig', {'button_label': 'Update'}) }}
+    {{ include('project/_edit_form.html.twig', {'form': form, 'button_label': 'Update'}) }}
 
     <a href="{{ path('app_project_index') }}">back to list</a>
 
