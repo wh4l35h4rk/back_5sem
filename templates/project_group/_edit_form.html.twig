@@ -1,0 +1,7 @@
+<form method="post" action="{{ path('app_project_group_edit', {'id': project_group.id}) }}">
+    <input type="hidden" name="_method" value="PATCH">
+
+    {{ form_widget(form) }}
+
+    <button class="btn">{{ button_label|default('Update') }}</button>
+</form>
