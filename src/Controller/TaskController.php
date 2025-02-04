@@ -21,9 +21,9 @@ final class TaskController extends AbstractController
     {
         $tasks = $taskRepository->findAll();
 
-        // $this->render('project_groups/index.html.twig', [
-        //     'projects' => $tasks,
-        // ]);
+        $this->render('project_groups/index.html.twig', [
+            'projects' => $tasks,
+        ]);
 
         $jsonData = $serializer->serialize($tasks, 'json', ['groups' => 'task:read']);
 
@@ -46,10 +46,10 @@ final class TaskController extends AbstractController
             return new JsonResponse($jsonData, Response::HTTP_OK, [], true);
         }
 
-        // $this->render('project/show.html.twig', [
-        //     'task' => $task,
-        //     'form' => $form,
-        // ]);
+        $this->render('project/show.html.twig', [
+            'task' => $task,
+            'form' => $form,
+        ]);
 
         $errors = [];
         foreach ($form->getErrors(true) as $error) {

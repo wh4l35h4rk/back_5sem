@@ -21,9 +21,9 @@ final class ProjectGroupController extends AbstractController
     {
         $projectGroups = $projectGroupRepository->findAll();
 
-        // $this->render('project_groups/index.html.twig', [
-        //     'projects' => $projectGroups,
-        // ]);
+        $this->render('project_groups/index.html.twig', [
+            'projects' => $projectGroups,
+        ]);
 
         $jsonData = $serializer->serialize($projectGroups, 'json', ['groups' => 'project_group:read']);
 
@@ -46,10 +46,10 @@ final class ProjectGroupController extends AbstractController
             return new JsonResponse($jsonData, Response::HTTP_OK, [], true);
         }
 
-        // $this->render('project/new.html.twig', [
-        //     'project' => $projectGroup,
-        //     'form' => $form,
-        // ]);
+        $this->render('project/new.html.twig', [
+            'project' => $projectGroup,
+            'form' => $form,
+        ]);
 
         $errors = [];
         foreach ($form->getErrors(true) as $error) {
@@ -62,9 +62,9 @@ final class ProjectGroupController extends AbstractController
     #[Route('/{id}', name: 'app_project_group_show', methods: ['GET'])]
     public function show(ProjectGroup $projectGroup, SerializerInterface $serializer): JsonResponse
     {
-        // $this->render('project/show.html.twig', [
-        //     'project' => $projectGroup,
-        // ]);
+        $this->render('project/show.html.twig', [
+            'project' => $projectGroup,
+        ]);
 
         $jsonData = $serializer->serialize($projectGroup, 'json', ['groups' => 'project_group:read']);
 
