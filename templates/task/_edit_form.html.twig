@@ -1,7 +1,0 @@
-<form method="post" action="{{ path('app_task_edit', {'id': task.id}) }}">
-    <input type="hidden" name="_method" value="PATCH">
-
-    {{ form_widget(form) }}
-
-    <button class="btn">{{ button_label|default('Update') }}</button>
-</form>
