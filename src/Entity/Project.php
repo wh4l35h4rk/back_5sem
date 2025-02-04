@@ -33,7 +33,7 @@ class Project
     /**
      * @var Collection<int, Task>
      */
-    #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'project', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'project', orphanRemoval: true, cascade: ['remove'])]
     private Collection $tasks;
 
     #[ORM\ManyToOne(inversedBy: 'projects')]
