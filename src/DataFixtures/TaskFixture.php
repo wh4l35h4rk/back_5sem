@@ -29,7 +29,7 @@ class TaskFixture extends DummyFixture implements DependentFixtureInterface
                 $task->setName($this->faker->word);
                 $task->setDescription($this->faker->sentence);
                 $task->setCreatedAt($this->faker->dateTime());
-                $task->setUpdatedAt($this->faker->dateTime());
+                $task->setUpdatedAt($task->getCreatedAt());
                 $task->setProject($this->faker->randomElement($projects));
             }
         );

@@ -3,6 +3,8 @@
 namespace App\Form;
 
 use App\Entity\Project;
+use App\Entity\ProjectGroup;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -25,12 +27,11 @@ class ProjectType extends AbstractType
                     ]),
                 ]
             ],)
-            ->add('createdAt', null, [
-                'widget' => 'single_text',
-            ])
-            ->add('updatedAt', null, [
-                'widget' => 'single_text',
-            ])
+            ->add('project_group', EntityType::class, [
+                'class' => ProjectGroup::class,
+                'choice_label' => 'name',
+                'required' => true,
+            ]);
         ;
     }
 
