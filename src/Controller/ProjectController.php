@@ -11,24 +11,27 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/project')]
 final class ProjectController extends AbstractController
 {
     #[Route(name: 'app_project_index', methods: ['GET'])]
-    public function index(ProjectRepository $projectRepository): JsonResponse
+    public function index(ProjectRepository $projectRepository, SerializerInterface $serializer): JsonResponse
     {
         $projects = $projectRepository->findAll();
 
-        $this->render('project/index.html.twig', [
-            'projects' => $projects,
-        ]);
+        // $this->render('project/index.html.twig', [
+        //     'projects' => $projects,
+        // ]);
 
-        return new JsonResponse(['data' => $projects]);
+        $jsonData = $serializer->serialize($projects, 'json', ['groups' => 'project:read']);
+
+        return new JsonResponse($jsonData, Response::HTTP_OK, [], true);
     }
 
     #[Route('/new', name: 'app_project_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function new(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
     {
         $project = new Project();
         $form = $this->createForm(ProjectType::class, $project);
@@ -38,13 +41,15 @@ final class ProjectController extends AbstractController
             $entityManager->persist($project);
             $entityManager->flush();
 
-            return new JsonResponse(['data' => $project]);
+            $jsonData = $serializer->serialize($project, 'json', ['groups' => 'project:read']);
+
+            return new JsonResponse($jsonData, Response::HTTP_OK, [], true);
         }
 
-        $this->render('project/new.html.twig', [
-            'project' => $project,
-            'form' => $form,
-        ]);
+        // $this->render('project/new.html.twig', [
+        //     'project' => $project,
+        //     'form' => $form,
+        // ]);
 
         $errors = [];
         foreach ($form->getErrors(true) as $error) {
@@ -55,17 +60,19 @@ final class ProjectController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_project_show', methods: ['GET'])]
-    public function show(Project $project): JsonResponse
+    public function show(Project $project, SerializerInterface $serializer): JsonResponse
     {
-        $this->render('project/show.html.twig', [
-            'project' => $project,
-        ]);
+        // $this->render('project/show.html.twig', [
+        //     'project' => $project,
+        // ]);
 
-        return new JsonResponse(['data' => $project]);
+        $jsonData = $serializer->serialize($project, 'json', ['groups' => 'project:read']);
+    
+        return new JsonResponse($jsonData, Response::HTTP_OK, [], true);
     }
 
     #[Route('/{id}/edit', name: 'app_project_edit', methods: ['GET', 'POST', 'PATCH'])]
-    public function edit(Request $request, Project $project, EntityManagerInterface $entityManager): JsonResponse
+    public function edit(Request $request, Project $project, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
     {
         $form = $this->createForm(ProjectType::class, $project);
         $form->handleRequest($request);
@@ -73,7 +80,9 @@ final class ProjectController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             if ($request->getMethod() === 'PATCH') {
                 $entityManager->flush();
-                return new JsonResponse(['data' => $project]);
+                $jsonData = $serializer->serialize($project, 'json', ['groups' => 'project:read']);
+
+                return new JsonResponse($jsonData, Response::HTTP_OK, [], true);
             }
         }
 
