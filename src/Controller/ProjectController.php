@@ -18,13 +18,13 @@ final class ProjectController extends AbstractController
     #[Route(name: 'app_project_index', methods: ['GET'])]
     public function index(ProjectRepository $projectRepository): JsonResponse
     {
-        $projects_all = $projectRepository->findAll();
+        $projects = $projectRepository->findAll();
 
         $this->render('project/index.html.twig', [
-            'projects' => $projects_all,
+            'projects' => $projects,
         ]);
 
-        return new JsonResponse(['data' => $projects_all]);
+        return new JsonResponse(['data' => $projects]);
     }
 
     #[Route('/new', name: 'app_project_new', methods: ['GET', 'POST'])]
