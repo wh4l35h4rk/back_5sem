@@ -17,13 +17,13 @@ final class ProjectGroupController extends AbstractController
     #[Route(name: 'app_project_group_index', methods: ['GET'])]
     public function index(ProjectGroupRepository $projectGroupRepository): JsonResponse
     {
-        $project_groups = $projectGroupRepository->findAll();
+        $projectGroups = $projectGroupRepository->findAll();
 
         $this->render('project_groups/index.html.twig', [
-            'projects' => $project_groups,
+            'projects' => $projectGroups,
         ]);
 
-        return new JsonResponse(['data' => $project_groups]);
+        return new JsonResponse(['data' => $projectGroups]);
     }
 
     #[Route('/new', name: 'app_project_group_new', methods: ['GET', 'POST'])]
