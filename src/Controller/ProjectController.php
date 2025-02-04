@@ -20,6 +20,11 @@ final class ProjectController extends AbstractController
     public function index(ProjectRepository $projectRepository, SerializerInterface $serializer): JsonResponse
     {
         $projects = $projectRepository->findAll();
+
+        $this->render('project/index.html.twig', [
+            'projects' => $projects,
+        ]);
+
         $jsonData = $serializer->serialize($projects, 'json', ['groups' => 'project:read']);
 
         return new JsonResponse($jsonData, Response::HTTP_OK, [], true);
@@ -41,6 +46,11 @@ final class ProjectController extends AbstractController
             return new JsonResponse($jsonData, Response::HTTP_OK, [], true);
         }
 
+        $this->render('project/new.html.twig', [
+            'project' => $project,
+            'form' => $form,
+        ]);
+
         $errors = [];
         foreach ($form->getErrors(true) as $error) {
             $errors[$error->getOrigin()->getName()][] = $error->getMessage();
@@ -52,6 +62,10 @@ final class ProjectController extends AbstractController
     #[Route('/{id}', name: 'app_project_show', methods: ['GET'])]
     public function show(Project $project, SerializerInterface $serializer): JsonResponse
     {
+        $this->render('project/show.html.twig', [
+            'project' => $project,
+        ]);
+
         $jsonData = $serializer->serialize($project, 'json', ['groups' => 'project:read']);
     
         return new JsonResponse($jsonData, Response::HTTP_OK, [], true);
