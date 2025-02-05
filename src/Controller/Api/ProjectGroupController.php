@@ -29,6 +29,9 @@ final class ProjectGroupController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
     {
         $projectGroup = new ProjectGroup();
+        $projectGroup->setCreatedAt(new \DateTime());
+        $projectGroup->setUpdatedAt(new \DateTime());
+        
         $form = $this->createForm(ProjectGroupType::class, $projectGroup);
         $form->handleRequest($request);
 
@@ -63,12 +66,15 @@ final class ProjectGroupController extends AbstractController
         $form = $this->createForm(ProjectGroupType::class, $projectGroup);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid() && $request->getMethod() === 'PATCH') {
-            $entityManager->flush();
-            $jsonData = $serializer->serialize($projectGroup, 'json', ['groups' => 'project_group:read']);
+        if ($form->isSubmitted() && $request->getMethod() === 'PATCH'){
+            $projectGroup->setUpdatedAt(new \DateTime());
 
-            return new JsonResponse($jsonData, Response::HTTP_OK, [], true);
-        }
+            if ($form->isValid()) {
+                $entityManager->flush();
+                $jsonData = $serializer->serialize($projectGroup, 'json', ['groups' => 'project_group:read']);
+
+                return new JsonResponse($jsonData, Response::HTTP_OK, [], true);
+        }}
 
         $errors = [];
         foreach ($form->getErrors(true) as $error) {

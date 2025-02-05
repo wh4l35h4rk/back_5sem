@@ -20,6 +20,13 @@ final class ProjectController extends AbstractController
     public function index(ProjectRepository $projectRepository, SerializerInterface $serializer): JsonResponse
     {
         $projects = $projectRepository->findAll();
+
+        foreach ($projects as $project) {
+            if ($project->getProjectGroup()) {
+                $project->getProjectGroup()->getName();
+            }
+        }
+
         $jsonData = $serializer->serialize($projects, 'json', ['groups' => 'project:read']);
 
         return new JsonResponse($jsonData, Response::HTTP_OK, [], true);
@@ -29,6 +36,9 @@ final class ProjectController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
     {
         $project = new Project();
+        $project->setCreatedAt(new \DateTime());
+        $project->setUpdatedAt(new \DateTime());
+
         $form = $this->createForm(ProjectType::class, $project);
         $form->handleRequest($request);
 
@@ -52,6 +62,10 @@ final class ProjectController extends AbstractController
     #[Route('/{id}', name: 'app_project_show', methods: ['GET'])]
     public function show(Project $project, SerializerInterface $serializer): JsonResponse
     {
+        if ($project->getProjectGroup()) {
+            $project->getProjectGroup()->getName();
+        }
+
         $jsonData = $serializer->serialize($project, 'json', ['groups' => 'project:read']);
     
         return new JsonResponse($jsonData, Response::HTTP_OK, [], true);
@@ -63,8 +77,10 @@ final class ProjectController extends AbstractController
         $form = $this->createForm(ProjectType::class, $project);
         $form->handleRequest($request);
     
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($request->getMethod() === 'PATCH') {
+        if ($form->isSubmitted() && $request->isMethod('PATCH')) {
+            $project->setUpdatedAt(new \DateTime());
+            
+            if ($form->isValid()) {
                 $entityManager->flush();
                 $jsonData = $serializer->serialize($project, 'json', ['groups' => 'project:read']);
 
