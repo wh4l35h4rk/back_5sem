@@ -13,10 +13,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('/project_group')]
+#[Route('/api/project_group')]
 final class ProjectGroupController extends AbstractController
 {
-    #[Route(name: 'app_project_group_index', methods: ['GET'])]
+    #[Route(name: 'api_project_group_index', methods: ['GET'])]
     public function index(ProjectGroupRepository $projectGroupRepository, SerializerInterface $serializer): JsonResponse
     {
         $projectGroups = $projectGroupRepository->findAll();
@@ -25,7 +25,7 @@ final class ProjectGroupController extends AbstractController
         return new JsonResponse($jsonData, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/new', name: 'app_project_group_new', methods: ['GET', 'POST'])]
+    #[Route('/new', name: 'api_project_group_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
     {
         $projectGroup = new ProjectGroup();
@@ -41,7 +41,7 @@ final class ProjectGroupController extends AbstractController
 
             $jsonData = $serializer->serialize($projectGroup, 'json', ['groups' => 'project_group:read']);
 
-            return new JsonResponse($jsonData, Response::HTTP_OK, [], true);
+            return new JsonResponse($jsonData, Response::HTTP_OK, [], json: true);
         }
 
         $errors = [];
@@ -52,7 +52,7 @@ final class ProjectGroupController extends AbstractController
         return new JsonResponse(['errors' => $errors]);
     }
 
-    #[Route('/{id}', name: 'app_project_group_show', methods: ['GET'])]
+    #[Route('/{id}', name: 'api_project_group_show', methods: ['GET'])]
     public function show(ProjectGroup $projectGroup, SerializerInterface $serializer): JsonResponse
     {
         $jsonData = $serializer->serialize($projectGroup, 'json', ['groups' => 'project_group:read']);
@@ -60,7 +60,7 @@ final class ProjectGroupController extends AbstractController
         return new JsonResponse($jsonData, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/{id}/edit', name: 'app_project_group_edit', methods: ['GET', 'POST', 'PATCH'])]
+    #[Route('/{id}/edit', name: 'api_project_group_edit', methods: ['GET', 'POST', 'PATCH'])]
     public function edit(Request $request, ProjectGroup $projectGroup, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
     {
         $form = $this->createForm(ProjectGroupType::class, $projectGroup);
@@ -84,7 +84,7 @@ final class ProjectGroupController extends AbstractController
         return new JsonResponse(['errors' => $errors]);
     }
 
-    #[Route('/{id}/delete', name: 'app_project_group_delete', methods: ['POST', 'DELETE'])]
+    #[Route('/{id}/delete', name: 'api_project_group_delete', methods: ['POST', 'DELETE'])]
     public function delete(Request $request, ProjectGroup $projectGroup, EntityManagerInterface $entityManager): JsonResponse
     {
         if ($request->getMethod() == 'DELETE' && $this->isCsrfTokenValid('delete'.$projectGroup->getId(), $request->getPayload()->getString('_token'))) {

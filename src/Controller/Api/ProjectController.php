@@ -13,10 +13,10 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('/project')]
+#[Route('/api/project')]
 final class ProjectController extends AbstractController
 {
-    #[Route(name: 'app_project_index', methods: ['GET'])]
+    #[Route(name: 'api_project_index', methods: ['GET'])]
     public function index(ProjectRepository $projectRepository, SerializerInterface $serializer): JsonResponse
     {
         $projects = $projectRepository->findAll();
@@ -32,7 +32,7 @@ final class ProjectController extends AbstractController
         return new JsonResponse($jsonData, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/new', name: 'app_project_new', methods: ['GET', 'POST'])]
+    #[Route('/new', name: 'api_project_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
     {
         $project = new Project();
@@ -59,7 +59,7 @@ final class ProjectController extends AbstractController
         return new JsonResponse(['data' => $errors]);
     }
 
-    #[Route('/{id}', name: 'app_project_show', methods: ['GET'])]
+    #[Route('/{id}', name: 'api_project_show', methods: ['GET'])]
     public function show(Project $project, SerializerInterface $serializer): JsonResponse
     {
         if ($project->getProjectGroup()) {
@@ -71,7 +71,7 @@ final class ProjectController extends AbstractController
         return new JsonResponse($jsonData, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/{id}/edit', name: 'app_project_edit', methods: ['GET', 'POST', 'PATCH'])]
+    #[Route('/{id}/edit', name: 'api_project_edit', methods: ['GET', 'POST', 'PATCH'])]
     public function edit(Request $request, Project $project, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
     {
         $form = $this->createForm(ProjectType::class, $project);
@@ -98,7 +98,7 @@ final class ProjectController extends AbstractController
     
     
 
-    #[Route('/{id}', name: 'app_project_delete', methods: ['POST', 'DELETE'])]
+    #[Route('/{id}/delete', name: 'api_project_delete', methods: ['POST', 'DELETE'])]
     public function delete(Request $request, Project $project, EntityManagerInterface $entityManager): JsonResponse
     {
         if ($request->getMethod() == 'DELETE' && $this->isCsrfTokenValid('delete'.$project->getId(), $request->getPayload()->getString('_token'))) {
