@@ -27,12 +27,6 @@ class ProjectType extends AbstractType
                     ]),
                 ]
             ],)
-            ->add('createdAt', null, [
-                'widget' => 'single_text',
-            ])
-            ->add('updatedAt', null, [
-                'widget' => 'single_text',
-            ])
             ->add('project_group', EntityType::class, [
                 'class' => ProjectGroup::class,
                 'choice_label' => 'name',

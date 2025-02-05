@@ -9,26 +9,28 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('/project/group')]
+#[Route('/project_group')]
 final class ProjectGroupController extends AbstractController
 {
     #[Route(name: 'app_project_group_index', methods: ['GET'])]
-    public function index(ProjectGroupRepository $projectGroupRepository, SerializerInterface $serializer): JsonResponse
+    public function index(ProjectGroupRepository $projectGroupRepository): Response
     {
         $projectGroups = $projectGroupRepository->findAll();
-        $jsonData = $serializer->serialize($projectGroups, 'json', ['groups' => 'project_group:read']);
 
-        return new JsonResponse($jsonData, Response::HTTP_OK, [], true);
+        return $this->render('project_group/index.html.twig', [
+            'project_groups' => $projectGroups,
+        ]);
     }
 
     #[Route('/new', name: 'app_project_group_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
+    public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $projectGroup = new ProjectGroup();
+        $projectGroup->setCreatedAt(new \DateTime());
+        $projectGroup->setUpdatedAt(new \DateTime());
+
         $form = $this->createForm(ProjectGroupType::class, $projectGroup);
         $form->handleRequest($request);
 
@@ -36,58 +38,52 @@ final class ProjectGroupController extends AbstractController
             $entityManager->persist($projectGroup);
             $entityManager->flush();
 
-            $jsonData = $serializer->serialize($projectGroup, 'json', ['groups' => 'project_group:read']);
-
-            return new JsonResponse($jsonData, Response::HTTP_OK, [], true);
+            return $this->redirectToRoute('app_project_group_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        $errors = [];
-        foreach ($form->getErrors(true) as $error) {
-            $errors[$error->getOrigin()->getName()][] = $error->getMessage();
-        }
-
-        return new JsonResponse(['errors' => $errors]);
+        return $this->render('project_group/new.html.twig', [
+            'project_group' => $projectGroup,
+            'form' => $form,
+        ]);
     }
 
     #[Route('/{id}', name: 'app_project_group_show', methods: ['GET'])]
-    public function show(ProjectGroup $projectGroup, SerializerInterface $serializer): JsonResponse
+    public function show(ProjectGroup $projectGroup): Response
     {
-        $jsonData = $serializer->serialize($projectGroup, 'json', ['groups' => 'project_group:read']);
-
-        return new JsonResponse($jsonData, Response::HTTP_OK, [], true);
+        return $this->render('project_group/show.html.twig', [
+            'project_group' => $projectGroup,
+        ]);
     }
 
     #[Route('/{id}/edit', name: 'app_project_group_edit', methods: ['GET', 'POST', 'PATCH'])]
-    public function edit(Request $request, ProjectGroup $projectGroup, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
+    public function edit(Request $request, ProjectGroup $projectGroup, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(ProjectGroupType::class, $projectGroup);
         $form->handleRequest($request);
+        
+        if ($form->isSubmitted() && $request->getMethod() === 'PATCH'){
+            $projectGroup->setUpdatedAt(new \DateTime());
 
-        if ($form->isSubmitted() && $form->isValid() && $request->getMethod() === 'PATCH') {
-            $entityManager->flush();
-            $jsonData = $serializer->serialize($projectGroup, 'json', ['groups' => 'project_group:read']);
+            if ($form->isValid()) {
+                $entityManager->flush();
 
-            return new JsonResponse($jsonData, Response::HTTP_OK, [], true);
-        }
+                return $this->redirectToRoute('app_project_group_index', [], Response::HTTP_SEE_OTHER);
+        }}
 
-        $errors = [];
-        foreach ($form->getErrors(true) as $error) {
-            $errors[$error->getOrigin()->getName()][] = $error->getMessage();
-        }
-
-        return new JsonResponse(['errors' => $errors]);
+        return $this->render('project_group/edit.html.twig', [
+            'project_group' => $projectGroup,
+            'form' => $form,
+        ]);
     }
 
     #[Route('/{id}', name: 'app_project_group_delete', methods: ['POST', 'DELETE'])]
-    public function delete(Request $request, ProjectGroup $projectGroup, EntityManagerInterface $entityManager): JsonResponse
+    public function delete(Request $request, ProjectGroup $projectGroup, EntityManagerInterface $entityManager): Response
     {
         if ($request->getMethod() == 'DELETE' && $this->isCsrfTokenValid('delete'.$projectGroup->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($projectGroup);
             $entityManager->flush();
-
-            return new JsonResponse(['deleted successfully']);
         }
 
-        return new JsonResponse(['something went wrong!']);
+        return $this->redirectToRoute('app_project_group_index', [], Response::HTTP_SEE_OTHER);
     }
 }
