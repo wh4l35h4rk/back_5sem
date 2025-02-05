@@ -14,7 +14,10 @@ class ProjectGroupFixture extends DummyFixture
                 $projectGroup->setName($this->faker->word);
                 $projectGroup->setCreatedAt($this->faker->dateTime());
                 $projectGroup->setUpdatedAt($this->faker->dateTime());
+                $this->addReference("project_group_$count", $projectGroup);
             }
         );
+        
+        $manager->flush(); 
     }
 }
