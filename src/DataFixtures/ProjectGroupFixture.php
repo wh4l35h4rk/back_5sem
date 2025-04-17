@@ -13,7 +13,7 @@ class ProjectGroupFixture extends DummyFixture
             function(ProjectGroup $projectGroup, $count) {
                 $projectGroup->setName($this->faker->word);
                 $projectGroup->setCreatedAt($this->faker->dateTime());
-                $projectGroup->setUpdatedAt($this->faker->dateTime());
+                $projectGroup->setUpdatedAt($projectGroup->getCreatedAt());
                 $this->addReference("project_group_$count", $projectGroup);
             }
         );

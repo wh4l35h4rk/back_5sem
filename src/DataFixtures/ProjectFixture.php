@@ -27,7 +27,7 @@ class ProjectFixture extends DummyFixture implements DependentFixtureInterface
             function(Project $project, $count) use ($projectGroups) {
                 $project->setName($this->faker->company);
                 $project->setCreatedAt($this->faker->dateTime());
-                $project->setUpdatedAt($this->faker->dateTime());
+                $project->setUpdatedAt($project->getCreatedAt());
                 $project->setProjectGroup($this->faker->randomElement($projectGroups));
                 $this->addReference("project_$count", $project);
             }

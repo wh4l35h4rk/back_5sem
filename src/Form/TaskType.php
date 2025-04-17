@@ -27,12 +27,6 @@ class TaskType extends AbstractType
                 ]
             ],)
             ->add('description')
-            ->add('createdAt', null, [
-                'widget' => 'single_text',
-            ])
-            ->add('updatedAt', null, [
-                'widget' => 'single_text',
-            ])
             ->add('project', EntityType::class, [
                 'class' => Project::class,
                 'choice_label' => 'name',
